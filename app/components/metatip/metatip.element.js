@@ -68,7 +68,7 @@ export class Metatip extends HTMLElement {
     this.$shadow.innerHTML = this.render(data)
   }
 
-  render({el, width, height, localModifications, notLocalModifications}) {
+  render({el, width, height, localModifications, notLocalModifications, attrs}) {
     return `
       <figure>
         <header>
@@ -102,6 +102,17 @@ export class Metatip extends HTMLElement {
             <code>${localModifications.reduce((items, item) => `
               ${items}
               <span><span prop>${item.prop}</span>:</span>
+              <span value>${item.value}</span>
+            `, '')}
+            </code>
+          </details>
+        ` : ''}
+        ${attrs.length ? `
+          <details>
+            <summary>HTML Attributes</summary>
+            <code>${attrs.reduce((items, item) => `
+              ${items}
+              <span><span prop>${item.name}</span>:</span>
               <span value>${item.value}</span>
             `, '')}
             </code>
