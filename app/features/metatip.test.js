@@ -4,7 +4,8 @@ import { setupPptrTab, teardownPptrTab, changeMode, getActiveTool }
 from '../../tests/helpers'
 
 const tool            = 'inspector'
-const test_selector   = '[intro] b'
+const test_selector = '[intro] b'
+const test_attributes = '[data-test="homepage_button"]'
 
 test.beforeEach(async t => {
   await setupPptrTab(t)
@@ -50,6 +51,33 @@ test('Should show tag name in header', async t => {
   )
 
   t.is(metatip_header_tag, 'b')
+  t.pass()
+})
+
+test('Should show attributes', async t => {
+  const { page } = t.context
+  
+  await page.click(test_attributes)
+  const { exists, text } = await page.evaluate(() => {
+    const el = document.querySelector('visbug-metatip').$shadow.querySelector('[data-metatip="attributes"] code');
+    const text = el.textContent.trim().replaceAll(' ', '').split('\n').filter(x => x !== '')
+    return { exists: !!el, text }
+  })
+  t.true(exists)
+  const attributesExpected = [
+    'class:',
+    'mdc-buttonmdc-button--raised',
+    'data-track:',
+    'homepage',
+    'data-test:',
+    'homepage_button',
+    'data-component:',
+    'button'
+  ]
+
+  attributesExpected.forEach(attr => {
+    t.truthy(text.includes(attr))
+  })
   t.pass()
 })
 

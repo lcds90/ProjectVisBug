@@ -108,7 +108,7 @@ export class Metatip extends HTMLElement {
           </details>
         ` : ''}
         ${attrs.length ? `
-          <details>
+          <details data-metatip="attributes">
             <summary>HTML Attributes</summary>
             <code>${attrs.reduce((items, item) => `
               ${items}
