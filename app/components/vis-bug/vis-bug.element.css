@@ -224,14 +224,14 @@
   stroke-width: 2px;
 }
 
-:host li[data-tool="search"] {
+:host li:is([data-tool="search"], [data-tool="analytics"]) {
   &:before {
     transform: translateX(-1em);
     opacity: 0;
   }
 }
 
-:host li[data-tool="search"] > .search {
+:host li:is([data-tool="search"], [data-tool="analytics"]) > .search {
   position: absolute;
   left: 0;
   top: 0;
@@ -242,7 +242,7 @@
   overflow: hidden;
 }
 
-:host li[data-tool="search"] > .search > input {
+:host li:is([data-tool="search"], [data-tool="analytics"]) > .search > input {
   direction: ltr;
   border: none;
   font-size: 1em;

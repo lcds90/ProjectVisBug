@@ -305,6 +305,13 @@ export const VisBugModel = {
     description: 'Just <b>Double click</b> any text on the page',
     instruction: '',
   },
+  w: {
+    tool: 'analytics',
+    icon: Icons.analytics,
+    label: '<span><u>W</u>eb Analytics</span>',
+    description: 'View analytics about the page',
+    instruction: '',
+  },
   // c: {
   //   tool:        'screenshot',
   //   icon:        Icons.camera,

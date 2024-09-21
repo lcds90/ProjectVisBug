@@ -33,7 +33,8 @@ export class Hotkeys extends HTMLElement {
       position:       document.createElement('hotkeys-position'),
       font:           document.createElement('hotkeys-font'),
       text:           document.createElement('hotkeys-text'),
-      search:         document.createElement('hotkeys-search'),
+      search: document.createElement('hotkeys-search'),
+      analytics: document.createElement('hotkeys-analytics'),
     }
 
     Object.values(this.tool_map).forEach(tool =>

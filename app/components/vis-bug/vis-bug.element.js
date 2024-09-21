@@ -9,7 +9,8 @@ import {
 import {
   Selectable, Moveable, Padding, Margin, EditText, Font,
   Flex, Search, ColorPicker, BoxShadow, HueShift, MetaTip,
-  Guides, Screenshot, Position, Accessibility, draggable
+  Guides, Screenshot, Position, Accessibility, draggable,
+  Analytics
 } from '../../features/'
 
 import {
@@ -233,6 +234,10 @@ export default class VisBug extends HTMLElement {
 
   search() {
     this.deactivate_feature = Search($('[data-tool="search"]', this.$shadow))
+  }
+
+  analytics() {
+    this.deactivate_feature = Analytics($('[data-tool="analytics"]', this.$shadow))
   }
 
   boxshadow() {
