@@ -88,6 +88,31 @@ export function provideSelectorEngine(Engine) {
 
 export function queryPage(query, fn) {
   // todo: should stash a cleanup method to be called when query doesnt match
+  
+  // /attr finder {[data-track]} {[data-component]}
+  const regex = /\{([^{}]+)\}/g;
+
+  // /attr finder --[data-track] --[data-component]
+  //  const regex = /--([^\s]+)/g;
+  const match = query.match(regex);
+  const queryParamsEnd = query.endsWith('}')
+  if (match && queryParamsEnd) {
+    // const queryFromMatch = query.split(' --')[0]
+    const queryFromMatch = query.split(' {')[0]
+    
+    if (PluginRegistry.has(queryFromMatch)) {
+      const params = match.map((param) => param
+        .replaceAll('{', '')
+        .replaceAll('}', '')
+      )
+      return PluginRegistry.get(queryFromMatch)({
+        selected: SelectorEngine.selection(),
+        query,
+        params,
+      })
+    }
+  }
+
   if (PluginRegistry.has(query))
     return PluginRegistry.get(query)({
       selected: SelectorEngine.selection(),

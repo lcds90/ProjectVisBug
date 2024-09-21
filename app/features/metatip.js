@@ -196,6 +196,10 @@ const render = (el, tip = document.createElement('visbug-metatip')) => {
     el.getAttribute('style') && el.getAttribute('style').includes(style.prop)
       ? 0
       : 1)
+  
+  const attrs = Array.from(el.attributes)
+      .filter(({ name, value }) => name.length && value.length)
+      .map(({ name, value }) => ({ name, value }))
 
   tip.meta = {
     el,
@@ -203,6 +207,7 @@ const render = (el, tip = document.createElement('visbug-metatip')) => {
     height,
     localModifications,
     notLocalModifications,
+    attrs,
   }
 
   return tip
