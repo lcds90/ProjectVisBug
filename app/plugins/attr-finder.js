@@ -9,12 +9,13 @@ export const commands = [
   'lcds90',
 ]
 
-export const description = 'find specific attributes for web analytics metrics!'
+export const description = 'debug attributes for web analytics, {!help} for details'
 
-export default async function ({ selected, params }) {
+export default async function ({ selected, params, query }) {
   const webComponentDebugger = document.querySelector('vis-bug')
   const getCopyButton = webComponentDebugger.$shadow.querySelector('#copy-all')
-  console.dir(webComponentDebugger)
+  const getTooltipEl = webComponentDebugger.$shadow.querySelector('#attr-finder-tooltip')
+  if (getTooltipEl) getTooltipEl.remove()
   if (getCopyButton) getCopyButton.remove()
 
   const findPastElHovers = document.querySelectorAll('visbug-hover')
@@ -23,30 +24,33 @@ export default async function ({ selected, params }) {
   if (!params) {
     console.log('Add attributes to search as parameters between %c{}', "font-size: 0.75rem; color: lightgreen;")
     console.log('Examples: /attr finder %c{[data-test]} {[data-track]}', "font-size: 0.75rem; color: lightgreen;")
+    return
+  }
+
+  console.log(params)
+  if (params[0].includes("!help")) {
     const tooltip = document.createElement('div')
     tooltip.id = 'attr-finder-tooltip'
     tooltip.style = `
-          position: fixed;
-    background: grey;
-    color: white;
-    bottom: 6px;
-    left: 260px;
-    width: max-content;
-    border-radius: 4px;
-    padding: 4px;
-    cursor: default;
-    font-size: 0.75rem;
-    `
+        position: fixed;
+  background: grey;
+  color: white;
+  bottom: 6px;
+  left: 260px;
+  width: max-content;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: default;
+  font-size: 0.75rem;
+  `
     tooltip.innerHTML = `
-      Add attributes to search as parameters between {} <br>
-      Examples: /attr finder {[data-test]} {[data-track]} <br>
-      See more about <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector" target="_blank">querySelector</a>
-    `
+    Add attributes to search as parameters between {} <br>
+    Examples: /attr finder {[data-test]} {[data-track]} <br>
+    See more about <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector" target="_blank">querySelector</a>
+  `
     webComponentDebugger.$shadow.querySelector('input[type=search]').insertAdjacentElement('afterend', tooltip)
-    return
+    return;
   }
-  const getTooltipEl = webComponentDebugger.$shadow.querySelector('#attr-finder-tooltip')
-  if (getTooltipEl) getTooltipEl.remove()
 
   const allSelectors = []
   const contentCopy = `
@@ -103,7 +107,7 @@ export default async function ({ selected, params }) {
         console.log(`%c${selector}`, "color: lightgreen; font-size: 0.75rem;")
       })
       console.groupEnd()
-      allSelectors.push(...selectorsListWithValueToSearch)
+      allSelectors.push({ [attr]: selectorsListWithValueToSearch })
     }
   }
   const elements = selected.length > 0 ? Array.from(selected) : [document.body]
@@ -125,7 +129,22 @@ export default async function ({ selected, params }) {
       `
     webComponentDebugger.$shadow.querySelector('ol[colors]').appendChild(copyAllButton)
     copyAllButton.addEventListener('click', () => {
-      navigator.clipboard.writeText(allSelectors.join('\n'))
+      console.log(allSelectors)
+
+      const result = allSelectors.reduce((acc, obj, index) => {
+        const [key, values] = Object.entries(obj)[0]; // Pega a chave e os valores
+        const valuesString = values.join('\n'); // Junta os valores com quebra de linha
+        acc += `Attribute: ${key}\n${valuesString}`; // Adiciona ao acumulador
+    
+        // Adiciona '---' se não for o último objeto
+        if (index < allSelectors.length - 1) {
+            acc += '\n\n---\n\n';
+        }
+    
+        return acc;
+    }, '');
+
+      navigator.clipboard.writeText(result)
     })
   })
 
