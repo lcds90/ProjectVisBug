@@ -58,3 +58,12 @@
 :host::backdrop {
   background: none !important;
 }
+
+
+:host details[analytics] {
+  margin: 0 0.25em;
+  position: absolute;
+  left: -2px;
+  top: -15px;
+  background: var(--neon-purple);
+}

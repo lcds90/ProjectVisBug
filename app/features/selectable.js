@@ -786,7 +786,18 @@ export function Selectable(visbug) {
 }
 
 export const handleLabelText = (el, activeTool) => {
-  switch(activeTool) {
+  switch (activeTool) {
+    case 'analytics': 
+      return `
+        <a node>${el.nodeName.toLowerCase() }</a>
+        ${el.getAttribute('data-description') ? 
+        `<details analytics>
+          <summary>Details</summary>
+          <code>${el.getAttribute('data-description')}
+          </code>
+        </details>` : ''
+        }
+      `
     case 'align':
       return getStyle(el, 'display')
 

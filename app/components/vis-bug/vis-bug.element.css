@@ -313,7 +313,7 @@
   background: none !important;
 }
 
-.analytics {
+:host .analytics {
   position: relative;
   position: fixed;
   bottom: 0.5em;
@@ -324,25 +324,26 @@
   gap: 0.25em;
 }
 
-.analytics button {
+:host .analytics button {
   width: 30px;
   height: 30px;
   border-radius: 4px;
   border: 1px solid var(--theme-icon_color);
   background: var(--theme-bd-2);
   cursor: pointer;
+  transition: background .25s;
 }
 
-.analytics button > svg {
+:host .analytics button > svg {
   width: 100%;
   fill: var(--theme-icon_color);
 }
 
-.analytics button:active {
+:host .analytics button:active {
   background: var(--theme-bd-3);
 }
 
-.analytics button:hover:not(:disabled) {
+:host .analytics button:hover:not(:disabled) {
   background: rgba(var(--theme-bd-2), 0.8);
 }
 
