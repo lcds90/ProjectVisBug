@@ -237,7 +237,9 @@ export default class VisBug extends HTMLElement {
   }
 
   analytics() {
-    this.deactivate_feature = Analytics($('[data-tool="analytics"]', this.$shadow))
+    const node = $('[data-tool="analytics"]', this.$shadow)
+    const visbug = this.selectorEngine
+    this.deactivate_feature = Analytics({ node, visbug })
   }
 
   boxshadow() {

@@ -1,17 +1,95 @@
-import {
-  isFixed,
-  colors,
-  numberBetween
-} from '../utilities/'
+import $ from 'blingblingjs'
+import hotkeys from 'hotkeys-js'
+import { querySelectorAllDeep } from 'query-selector-shadow-dom'
+import { PluginRegistry, PluginHints } from '../../plugins/_registry.js'
+import { notList } from '../../utilities/index.js'
+import { isFirefox } from '../../utilities/cross-browser.js'
+import { contentCopy, download, upload } from '../../components/vis-bug/vis-bug.icons.js'
 
-export const commands = [
-  'attr finder',
-  'lcds90',
-]
+let SelectorEngine
 
-export const description = 'debug attributes for web analytics, {!help} for details'
+const selectorsInLocalStorage = JSON.parse(localStorage.getItem('selectors') || '[]')
 
-export default async function ({ selected, params, query }) {
+// create input
+const search_base = document.createElement('div')
+search_base.classList.add('search')
+search_base.innerHTML = `
+  <input list="visbug-web-analytics-list" type="search" placeholder="Enter the attribute to find"/>
+  <datalist id="visbug-web-analytics-list">
+    ${selectorsInLocalStorage.reduce((options, selector) =>
+      options += isFirefox > 0
+        ? `<option value="${selector}">`
+        : `<option value="${selector}">${selector}`
+    , '')}
+  </datalist>
+  
+`
+
+const buttonShowNotMapped = document.createElement('div')
+buttonShowNotMapped.classList.add('analytics')
+buttonShowNotMapped.innerHTML = `
+        <button class="load" title="Carregar pré-definição de seletores">
+          ${upload}
+        </button>
+        <button class="analytics-download" title="Baixar seletores">
+        ${download}
+        </button>
+        <button class="analytics-copy-all" title="Copiar seletores" disabled>
+          ${contentCopy}
+        </button>
+`
+search_base.appendChild(buttonShowNotMapped)
+
+const search        = $(search_base)
+const searchInput = $('input', search_base)
+
+const showSearchBar = () => search.attr('style', 'display:block')
+const hideSearchBar = () => search.attr('style', 'display:none')
+const stopBubbling  = e => e.key != 'Escape' && e.stopPropagation()
+
+export function Analytics({ node }) {
+  if (node) node[0].appendChild(search[0])
+
+  const onQuery = e => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const query = e.target.value
+
+    window.requestIdleCallback(_ =>
+      queryPage(query))
+  }
+
+  const focus = e =>
+    searchInput[0].focus()
+
+  searchInput.on('click', focus)
+  searchInput.on('input', onQuery)
+  searchInput.on('keydown', stopBubbling)
+  // searchInput.on('blur', hideSearchBar)
+
+  showSearchBar()
+  focus()
+
+  // hotkeys('escape,esc', (e, handler) => {
+  //   hideSearchBar()
+  //   hotkeys.unbind('escape,esc')
+  // })
+
+  return () => {
+    hideSearchBar()
+    searchInput.off('oninput', onQuery)
+    searchInput.off('keydown', stopBubbling)
+    searchInput.off('blur', hideSearchBar)
+  }
+}
+
+export function provideSelectorEngine(Engine) {
+  SelectorEngine = Engine
+}
+
+export function queryPage(query) {
+/* 
   const webComponentDebugger = document.querySelector('vis-bug')
   const getCopyButton = webComponentDebugger.$shadow.querySelector('#copy-all')
   const getTooltipEl = webComponentDebugger.$shadow.querySelector('#attr-finder-tooltip')
@@ -19,8 +97,8 @@ export default async function ({ selected, params, query }) {
   if (getCopyButton) getCopyButton.remove()
 
   const findPastElHovers = document.querySelectorAll('visbug-hover')
-  findPastElHovers.forEach(el => el.remove())
-
+  findPastElHovers.forEach(el => el.remove()) */
+/* 
   if (!params) {
     console.log('Add attributes to search as parameters between %c{}', "font-size: 0.75rem; color: lightgreen;")
     console.log('Examples: /attr finder %c{[data-test]} {[data-track]}', "font-size: 0.75rem; color: lightgreen;")
@@ -51,13 +129,9 @@ export default async function ({ selected, params, query }) {
     webComponentDebugger.$shadow.querySelector('input[type=search]').insertAdjacentElement('afterend', tooltip)
     return;
   }
-
-  const allSelectors = []
-  const contentCopy = `
-  <svg height="24" viewBox="0 0 24 24" width="24">
-    <path d="M0 0h24v24H0z" fill="none"/>
-    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-  </svg>
+ */
+  /* const allSelectors = []
+ 
 `
 
   const findEls = (el, querySelector) => {
@@ -146,7 +220,59 @@ export default async function ({ selected, params, query }) {
 
       navigator.clipboard.writeText(result)
     })
-  })
+  }) */
+}
 
+export function queryPageOld(query, fn) {
+  // todo: should stash a cleanup method to be called when query doesnt match
+  
+  // /attr finder {[data-track]} {[data-component]}
+  const regex = /\{([^{}]+)\}/g;
 
+  // /attr finder --[data-track] --[data-component]
+  //  const regex = /--([^\s]+)/g;
+  const match = query.match(regex);
+  const queryParamsEnd = query.endsWith('}')
+  if (match && queryParamsEnd) {
+    // const queryFromMatch = query.split(' --')[0]
+    const queryFromMatch = query.split(' {')[0]
+    
+    if (PluginRegistry.has(queryFromMatch)) {
+      const params = match.map((param) => param
+        .replaceAll('{', '')
+        .replaceAll('}', '')
+      )
+      return PluginRegistry.get(queryFromMatch)({
+        selected: SelectorEngine.selection(),
+        query,
+        params,
+      })
+    }
+  }
+
+  if (PluginRegistry.has(query))
+    return PluginRegistry.get(query)({
+      selected: SelectorEngine.selection(),
+      query
+    })
+
+  if (query == 'links')     query = 'a'
+  if (query == 'buttons')   query = 'button'
+  if (query == 'images')    query = 'img'
+  if (query == 'text')      query = 'p,caption,a,h1,h2,h3,h4,h5,h6,small,date,time,li,dt,dd'
+
+  if (!query) return SelectorEngine.unselect_all()
+  if (query == '.' || query == '#' || query.trim().endsWith(',')) return
+
+  try {
+    let matches = querySelectorAllDeep(query + notList)
+    if (!matches.length) matches = querySelectorAllDeep(query)
+    if (matches.length) {
+      matches.forEach(el =>
+        fn
+          ? fn(el)
+          : SelectorEngine.select(el))
+    }
+  }
+  catch (err) {}
 }

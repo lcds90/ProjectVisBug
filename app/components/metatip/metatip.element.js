@@ -107,17 +107,6 @@ export class Metatip extends HTMLElement {
             </code>
           </details>
         ` : ''}
-        ${attrs.length ? `
-          <details data-metatip="attributes">
-            <summary>HTML Attributes</summary>
-            <code>${attrs.reduce((items, item) => `
-              ${items}
-              <span><span prop>${item.name}</span>:</span>
-              <span value>${item.value}</span>
-            `, '')}
-            </code>
-          </details>
-        ` : ''}
       </figure>
     `
   }

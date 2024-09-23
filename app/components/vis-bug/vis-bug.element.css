@@ -179,8 +179,8 @@
     }
   }
 
-  &:hover:not([data-tool="search"]) > aside,
-  &[data-tool="search"] > svg:hover + aside {
+  &:hover:not(:is([data-tool="search"], [data-tool="analytics"])) > aside,
+  &:is([data-tool="search"], [data-tool="analytics"]) > svg:hover + aside {
     opacity: 1;
     transform: translateX(0);
     transition-delay: 1s;
@@ -311,4 +311,42 @@
 
 :host::backdrop {
   background: none !important;
+}
+
+.analytics {
+  position: relative;
+  position: fixed;
+  bottom: 0.5em;
+  left: 3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25em;
+}
+
+.analytics button {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid var(--theme-icon_color);
+  background: var(--theme-bd-2);
+  cursor: pointer;
+}
+
+.analytics button > svg {
+  width: 100%;
+  fill: var(--theme-icon_color);
+}
+
+.analytics button:active {
+  background: var(--theme-bd-3);
+}
+
+.analytics button:hover:not(:disabled) {
+  background: rgba(var(--theme-bd-2), 0.8);
+}
+
+.analytics button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
