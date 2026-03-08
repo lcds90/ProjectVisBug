@@ -790,10 +790,11 @@ export const handleLabelText = (el, activeTool) => {
     case 'analytics': 
       return `
         <a node>${el.nodeName.toLowerCase() }</a>
-        ${el.getAttribute('data-description') ? 
+        ${true ? 
         `<details analytics>
           <summary>Details</summary>
           <code>${el.getAttribute('data-description')}
+          test test test
           </code>
         </details>` : ''
         }

@@ -10,6 +10,7 @@ export { Corners }    from './selection/corners.element'
 export { Grip }       from './selection/grip.element'
 
 export { Metatip }    from './metatip/metatip.element'
-export { Ally }       from './metatip/ally.element'
+export { Ally } from './metatip/ally.element'
+export { Analytics } from './metatip/analytics.element'
 
 export { Hotkeys }    from './hotkey-map/hotkeys.element'

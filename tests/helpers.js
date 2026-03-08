@@ -1,10 +1,7 @@
 import puppeteer from 'puppeteer'
 
 export const setupPptrTab = async t => {
-  t.context.browser  = await puppeteer.launch({
-    // headless: false,
-    args: ['--no-sandbox']
-  })
+  t.context.browser = await puppeteer.launch({ headless: true })
   t.context.page     = await t.context.browser.newPage()
 
   await t.context.page.goto('http://localhost:3000')

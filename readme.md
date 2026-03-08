@@ -102,3 +102,19 @@ If it hasn't, just open a [new clear and descriptive issue](../../issues/new).
 ## License
 
 [Apache2 License](LICENSE) © [Adam Argyle](https://argyleink.com)
+
+https://github.com/GoogleChromeLabs/ProjectVisBug/issues/163
+
+Hi @argyleink, super excited to contribute to this topic,
+I would like to bring some ideas based on my day to day and have a bridge as UX metrics
+
+The initial idea is
+![image](https://github.com/user-attachments/assets/4a52c042-300a-4661-a1f2-c6facde1e65f)
+- Offer an input as a pre-definition of selectors, being able to separate with `,` to have the option of one more selector, previously located selectors will be saved in the localStorage after saving
+- When selecting certain elements, can generate a list to export and pass on to the development team to map
+- User can upload and download with the following pre-definitions
+
+| Selector | Normalized name | Extra description | Is mapped |
+|--------|--------|--------|--------|
+| [data-track="test"] | Button with action | This button does x action | true |
+| [data-track="test-not-mapped"] | Back button | This button returns to the previous screen | false |
